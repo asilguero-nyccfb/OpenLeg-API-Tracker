@@ -56,14 +56,14 @@ def export_to_excel(bill_data, filename_prefix="NY_Senate_Bills_data"):
 
 
 # Fetch bill details
-bill_data = fetch_bill_details(api_key)
+#bill_data = fetch_bill_details(api_key)
 
-if bill_data:
+#if bill_data:
     # Print the entire structure of the response for debugging
-    print(f"Full Response: {bill_data}")
+ #   print(f"Full Response: {bill_data}")
 
     # Export data to Excel with a timestamped filename
-    export_to_excel(bill_data)
+  #  export_to_excel(bill_data)
 
-else:
-    print("No data retrieved from the API.")
+#else:
+ #   print("No data retrieved from the API.")
