@@ -29,6 +29,7 @@ def fetch_bill_details(api_key):
         print(f"Error getting data: {e}")
         return None
 
+#def filter_bill_data (bill_data)
 
 def export_to_excel(bill_data, filename_prefix="NY_Senate_Bills_data"):
     # Generate a timestamp to append to the filename
@@ -55,7 +56,7 @@ def export_to_excel(bill_data, filename_prefix="NY_Senate_Bills_data"):
         print("'result.items' not found in the API response.")
 
 
-# Fetch bill details
+#Fetch bill details
 #bill_data = fetch_bill_details(api_key)
 
 #if bill_data:
@@ -66,4 +67,4 @@ def export_to_excel(bill_data, filename_prefix="NY_Senate_Bills_data"):
   #  export_to_excel(bill_data)
 
 #else:
- #   print("No data retrieved from the API.")
+ #   print("No data retrieved from the API.")"
