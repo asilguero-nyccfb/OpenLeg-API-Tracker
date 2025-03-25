@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "Starting Open Leg Tracker..."
           # --log-output --log-level DEBUG ensures all print statements in the notebook appear in the Actions logs
-          papermill src/LegistarAPI.ipynb src/LegistarAPI_output.ipynb --log-output --log-level DEBUG
+          papermill src/NY_State_Leg_Tracker_V2.ipynb src/NY_State_Leg_Tracker_V2_output.ipynb --log-output --log-level DEBUG
           echo "Notebook executed successfully."
 
       # Step 5: Verify generated file exists
