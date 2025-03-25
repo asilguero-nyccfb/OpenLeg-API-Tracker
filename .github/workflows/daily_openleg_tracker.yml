@@ -36,7 +36,7 @@ jobs:
       # Step 4: Run the Open Leg Tracker notebook with Papermill
       - name: Run Open Leg Tracker
         env:
-          OPENLEG_API_KEY: ${{ secrets.OPENLEG_API_KEY }}
+          OPENLEG_API_KEY: ${{ secrets.OPEN_LEG_API_KEY }}
           SP_USER: ${{ secrets.SP_USER }}
           SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
           SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
