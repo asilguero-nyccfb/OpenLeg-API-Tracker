@@ -2,7 +2,7 @@ name: New York State Tracker Daily Upload
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight UTC
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
   workflow_dispatch:
     inputs:
       step_to_run:
@@ -43,7 +43,6 @@ jobs:
           TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
         run: |
           echo "Starting Open Leg Tracker..."
-          # --log-output --log-level DEBUG ensures all print statements in the notebook appear in the Actions logs
           papermill src/NY_State_Leg_Tracker_V2.ipynb src/NY_State_Leg_Tracker_V2_output.ipynb --log-output --log-level DEBUG
           echo "Notebook executed successfully."
 
@@ -51,11 +50,11 @@ jobs:
       - name: Verify generated file
         id: verify-file
         run: |
-          if [ -f src/(INSERT NAME)xlsx ]; then
-            echo "(INSERT NAME file exists."
+          if [ -f src/NY_Senate_bills_data_20250319_191503.xlsx ]; then
+            echo "NY_Senate_bills_data_20250319_191503.xlsx file exists."
             echo "file_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "INSERT NAME file does not exist."
+            echo "NY_Senate_bills_data_20250319_191503.xlsx file does not exist."
             echo "file_exists=false" >> $GITHUB_OUTPUT
           fi
 
@@ -67,27 +66,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          echo "Checking for changes in INSERT NAME..."
-          git add INSERT NAME xlsx
+          echo "Checking for changes in NY_Senate_bills_data_20250319_191503.xlsx..."
+          git add src/NY_Senate_bills_data_20250319_191503.xlsx
 
           if ! git diff-index --quiet HEAD --; then
             echo "Changes detected. Committing and pushing..."
-            git commit -m "Update (INSERT NAME) with new data"
-            git push
-            echo "Changes have been committed and pushed successfully."
-          else
-            echo "No changes detected. Exiting gracefully."
-          fi
-
-      # Step 7: Run the SharePoint Upload notebook to upload to SharePoint
-      - name: Run SharePoint Upload
-        if: steps.verify-file.outputs.file_exists == 'true'
-        env:
-          SP_USER: ${{ secrets.SP_USER }}
-          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
-          SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
-          TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
-        run: |
-          echo "Starting SharePoint Upload..."
-          papermill src/SharepointUpload.ipynb src/SharepointUpload_output.ipynb --log-output --log-level DEBUG
-          echo "SharePoint Upload notebook executed successfully."
+            git commit
