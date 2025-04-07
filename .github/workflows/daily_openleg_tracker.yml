@@ -37,8 +37,12 @@ jobs:
       - name: Run Open Leg Tracker
         env:
           OPENLEG_API_KEY: ${{ secrets.OPENLEG_API_KEY }}
+          # Use either user credentials or app-based if you switch:
           SP_USER: ${{ secrets.SP_USER }}
           SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
+          # For app-based auth, add these:
+          SP_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+          SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
           SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
           TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
         run: |
@@ -88,8 +92,11 @@ jobs:
       - name: Run SharePoint Upload
         if: steps.verify-file.outputs.file_exists == 'true'
         env:
+          # Use the same environment variables as above:
           SP_USER: ${{ secrets.SP_USER }}
           SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
+          SP_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+          SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
           SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
           TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
         run: |
