@@ -43,7 +43,7 @@ jobs:
           TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
         run: |
           echo "Starting Open Leg Tracker..."
-          papermill src/LegistarAPI.ipynb src/LegistarAPI_output.ipynb --log-output --log-level DEBUG
+          papermill src/NY_State_Leg_Tracker_V2.ipynb src/NY_State_Leg_Tracker_V2_output.ipynb --log-output --log-level DEBUG
           echo "Notebook executed successfully."
 
       # Step 5: Verify generated file exists and capture its name
