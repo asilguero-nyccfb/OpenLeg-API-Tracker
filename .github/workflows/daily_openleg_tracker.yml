@@ -84,7 +84,7 @@ jobs:
             echo "No changes detected. Exiting gracefully."
           fi
 
-      # Step 7: Run the SharePoint Upload notebook to upload to SharePoint
+      # Step 7: Run the SharePoint Upload notebook with an explicit kernel override
       - name: Run SharePoint Upload
         if: steps.verify-file.outputs.file_exists == 'true'
         env:
@@ -94,5 +94,5 @@ jobs:
           TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
         run: |
           echo "Starting SharePoint Upload..."
-          papermill src/SharepointUpload.ipynb src/SharepointUpload_output.ipynb --log-output --log-level DEBUG
+          papermill src/SharepointUpload.ipynb src/SharepointUpload_output.ipynb --log-output --log-level DEBUG --kernel python3
           echo "SharePoint Upload notebook executed successfully."
