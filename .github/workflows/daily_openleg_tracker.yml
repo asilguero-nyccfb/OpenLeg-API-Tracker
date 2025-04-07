@@ -2,7 +2,7 @@ name: New York State Tracker Daily Upload
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
   workflow_dispatch:
     inputs:
       step_to_run:
@@ -36,26 +36,31 @@ jobs:
       # Step 4: Run the Open Leg Tracker notebook with Papermill
       - name: Run Open Leg Tracker
         env:
-          OPENLEG_API_KEY: ${{ secrets.OPEN_LEG_API_KEY }}
+          OPENLEG_API_KEY: ${{ secrets.OPENLEG_API_KEY }}
           SP_USER: ${{ secrets.SP_USER }}
           SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
           SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
           TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
         run: |
           echo "Starting Open Leg Tracker..."
-          papermill src/NY_State_Leg_Tracker_V2.ipynb src/NY_State_Leg_Tracker_V2_output.ipynb --log-output --log-level DEBUG
+          papermill src/LegistarAPI.ipynb src/LegistarAPI_output.ipynb --log-output --log-level DEBUG
           echo "Notebook executed successfully."
 
-      # Step 5: Verify generated file exists
+      # Step 5: Verify generated file exists and capture its name
       - name: Verify generated file
         id: verify-file
         run: |
-          if [ -f src/NY_Senate_bills_data_20250319_191503.xlsx ]; then
-            echo "NY_Senate_bills_data_20250319_191503.xlsx file exists."
+          # Search for a file that matches the timestamped naming pattern in the src directory
+          FILE=$(ls src/NY_Senate_bills_data_*.xlsx 2>/dev/null | sort | tail -n 1)
+          
+          if [ -n "$FILE" ] && [ -f "$FILE" ]; then
+            echo "File found: $FILE"
             echo "file_exists=true" >> $GITHUB_OUTPUT
+            echo "file_name=$FILE" >> $GITHUB_OUTPUT
           else
-            echo "NY_Senate_bills_data_20250319_191503.xlsx file does not exist."
+            echo "No matching file found."
             echo "file_exists=false" >> $GITHUB_OUTPUT
+            echo "file_name=" >> $GITHUB_OUTPUT
           fi
 
       # Step 6: Commit and Push Changes if file exists and has changes
@@ -66,9 +71,28 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          echo "Checking for changes in NY_Senate_bills_data_20250319_191503.xlsx..."
-          git add src/NY_Senate_bills_data_20250319_191503.xlsx
+          FILE_NAME=${{ steps.verify-file.outputs.file_name }}
+          echo "Checking for changes in $FILE_NAME..."
+          git add "$FILE_NAME"
 
           if ! git diff-index --quiet HEAD --; then
             echo "Changes detected. Committing and pushing..."
-            git commit
+            git commit -m "Update $FILE_NAME with new data"
+            git push
+            echo "Changes have been committed and pushed successfully."
+          else
+            echo "No changes detected. Exiting gracefully."
+          fi
+
+      # Step 7: Run the SharePoint Upload notebook to upload to SharePoint
+      - name: Run SharePoint Upload
+        if: steps.verify-file.outputs.file_exists == 'true'
+        env:
+          SP_USER: ${{ secrets.SP_USER }}
+          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
+          SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
+          TARGET_FOLDER_RELATIVE_URL: ${{ secrets.TARGET_FOLDER_RELATIVE_URL }}
+        run: |
+          echo "Starting SharePoint Upload..."
+          papermill src/SharepointUpload.ipynb src/SharepointUpload_output.ipynb --log-output --log-level DEBUG
+          echo "SharePoint Upload notebook executed successfully."
